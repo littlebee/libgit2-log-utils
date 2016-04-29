@@ -5,6 +5,9 @@ Fs = require "fs"
 
 # _ = require('underscore')
 
+Git = require('nodegit')
+Promise = require('es6-promise').Promise
+
 
 module.exports = class Libgit2LogUtils
 
@@ -26,4 +29,38 @@ module.exports = class Libgit2LogUtils
       }]
   ###
   @getCommitHistory: (fileOrDirectory) ->
-    return []
+    historyEntries = []
+    return new Promise (resolve, reject) ->
+      # Open the repository directory.
+      Git.Repository.open(fileOrDirectory).then((repo) ->
+        repo.getMasterCommit()
+      ).then (firstCommitOnMaster) ->
+        # Create a new history event emitter.
+        history = firstCommitOnMaster.history()
+        # Listen for commit events from the history.
+        history.on 'commit', (commit) ->
+          historyEntry = {
+            id: commit.sha()
+            author: commit.author().name()
+            authorDate: commit.timeMs()
+            message: commit.summary()
+            body: commit.message().split('\n\n')[1..-1].join('\n\n')
+            hash: commit.sha()
+            linesAdded: 0
+            linesDeleted: 0
+          }
+          historyEntries.push historyEntry
+          commit.getDiff().then (arrayDiff) ->
+            debugger
+            for diff, diffIndex in arrayDiff
+              diff.patches().then (patches) ->
+                for patch in patches
+                  lineStats = patch.lineStats()
+                  historyEntry.linesAdded += lineStats.total_additions
+                  historyEntry.linesDeleted += lineStats.total_deletions
+
+        history.on 'end', () ->
+          resolve(historyEntries)
+
+        # Start emitting events.
+        history.start()
