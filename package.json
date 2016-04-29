@@ -4,7 +4,8 @@
   "description": "Simple utility functions for fetching git history using libgit2 ",
   "main": "index.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "prepublish": "grunt build"
   },
   "repository": {
     "type": "git",
