@@ -1,0 +1,26 @@
+{
+  "name": "libgit2-log-utils",
+  "version": "0.1.0",
+  "description": "Simple utility functions for fetching git history using libgit2 ",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/littlebee/libgit2-log-utils.git"
+  },
+  "keywords": [
+    "git",
+    "log",
+    "git-log",
+    "git-log-utils",
+    "libgit2"
+  ],
+  "author": "Bee Wilkerson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/littlebee/libgit2-log-utils/issues"
+  },
+  "homepage": "https://github.com/littlebee/libgit2-log-utils#readme"
+}
