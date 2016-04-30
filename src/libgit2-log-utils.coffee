@@ -12,6 +12,8 @@ Promise = require('es6-promise').Promise
 
 module.exports = class Libgit2LogUtils
 
+  console.log "WTFF"
+
   # TODO : move to more general lib?
   @findGitRepoFor: (fileOrDirectory) ->
     dirName = if Fs.lstatSync(fileOrDirectory).isDirectory()
