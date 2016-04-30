@@ -6,3 +6,4 @@ This line will be deleted on the 4th commit
 ...and so will this one
 
 This line and above added in the second commit to this file
+This line added on the third commit
