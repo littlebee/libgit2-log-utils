@@ -6,17 +6,18 @@ Simple utility functions for fetching git history using libgit2
 
 
 ### Usage
-Like stupid simple:
-*from bin/getLogJson*
+Like stupid simple (*from bin/getLogJson*):
+
 ```javascript
-LogUtils.getCommitHistory(process.argv[2]).then(function(history) {
+LogUtils.getCommitHistory('mydir/maybeMyFile').then(function(history) {
   return console.log(JSON.stringify(history, null, 2));
 })["catch"](function(error) {
   return console.error(error);
 });
 ```
 ...will produce...
-```json
+
+```javascript
 [
   {
     "id": "233b26b3a1e212e50693e2e41f2252afa7ebf16d",
@@ -50,3 +51,4 @@ LogUtils.getCommitHistory(process.argv[2]).then(function(history) {
   }
 ]
 ```
+The getCommitHistory() method will accept a file or directory and can also handle absolute (full path) path specifications.
