@@ -6,3 +6,5 @@ This file has been committed 5 times. This is used to test the parsing of git lo
 This line and above added in the second commit to this file
 This line added on the third commit
 This line added on the forth commit, also 2 lines from first commit were removed
+
+This line and one blank line added on the 5th commit
