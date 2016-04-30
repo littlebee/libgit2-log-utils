@@ -1,5 +1,6 @@
 # libgit2-log-utils
-Simple utility functions for fetching git history using libgit2  
+Simple utility functions for fetching git history using libgit2.
+
 
 ### Installation
 `npm install libgit2-log-utils`
@@ -9,9 +10,11 @@ Simple utility functions for fetching git history using libgit2
 Like stupid simple (*from bin/getLogJson*):
 
 ```javascript
+LogUtils = require('libgit2-log-utils');
+
 LogUtils.getCommitHistory('mydir/maybeMyFile').then(function(history) {
   return console.log(JSON.stringify(history, null, 2));
-})["catch"](function(error) {
+}).catch(function(error) {
   return console.error(error);
 });
 ```
