@@ -10,10 +10,12 @@ Simple utility functions for fetching git history using libgit2.
 Like stupid simple (*from bin/getLogJson*):
 
 ```javascript
-LogUtils = require('libgit2-log-utils');
+LogUtils = require('libgit2-log-utils')
 
-LogUtils.getCommitHistory('mydir/maybeMyFile')
-.then(function(history) {  return console.log(JSON.stringify(history, null, 2)); })
+LogUtils.getCommitHistory("myPath/maybeMyFile")
+.then(function(history) {
+  return console.log(JSON.stringify(history, null, 2));
+})
 .catch(function(error) {
   return console.error(error);
 });

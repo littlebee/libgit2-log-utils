@@ -30,15 +30,31 @@ module.exports = class Libgit2LogUtils
     Returns a promise that when fullfilled, returns an array of javascript objects representing
     the commits that effected the requested file with line stats, that looks like this:
       [{
-        "id": "1c41d8f647f7ad30749edcd0a554bd94e301c651",
-        "authorName": "Bee Wilkerson",
-        "relativeDate": "6 days ago",
-        "authorDate": 1450881433,
-        "message": "docs all work again after refactoring to bumble-build",
+        "id": "118c9782dbd8598c6f06f4e1ebfc3bca44da0709",
+        "author": "Bee",
+        "authorDate": 1461944361000,
+        "message": "Initial commit",
         "body": "",
-        "hash": "1c41d8f",
-        "linesAdded": 2,
-        "linesDeleted": 2
+        "hash": "118c9782dbd8598c6f06f4e1ebfc3bca44da0709",
+        "linesAdded": 56,
+        "linesDeleted": 0,
+        "files": [
+          {
+            "path": ".gitignore",
+            "linesAdded": 33,
+            "linesDeleted": 0
+          },
+          {
+            "path": "LICENSE",
+            "linesAdded": 21,
+            "linesDeleted": 0
+          },
+          {
+            "path": "README.md",
+            "linesAdded": 2,
+            "linesDeleted": 0
+          }
+        ]
       }, {
         ...
       }]
