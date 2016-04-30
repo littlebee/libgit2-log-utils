@@ -42,6 +42,9 @@ describe "GitUtils", ->
     it "should have all the same commits we once had", ->
       _expectedArray = expectedCommitsForDir.sort (a, b) -> a.authorDate - b.authorDate
       _expectedJson = JSON.stringify(_expectedArray, null, 2)
+      # also slice off the last few characters of the expected to take the array
+      #  termination characters our of the comparison
+      _expectedJson = _expectedJson.slice(0, _expectedJson.length - 5)
       _testArray = testData.sort (a, b) -> a.authorDate - b.authorDate
       _testDataJson = JSON.stringify(_testArray, null, 2).slice(0, _expectedJson.length)
 
