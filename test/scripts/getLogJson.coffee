@@ -9,6 +9,6 @@ unless process.argv.length > 2
   console.log "usage:  test/scripts/getLogJson fileOrDirectory"
 LogUtils.getCommitHistory(process.argv[2])
 .then (history)->
-  console.log history
+  console.log JSON.stringify(history, null, 2)
 .catch (error) ->
   console.error error

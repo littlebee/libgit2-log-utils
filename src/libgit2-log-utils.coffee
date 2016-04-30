@@ -3,7 +3,8 @@ ChildProcess = require "child_process"
 Path = require "path"
 Fs = require "fs"
 
-# _ = require('underscore')
+_ = require('underscore')
+Bstr = require('bumble-strings')
 
 Git = require('nodegit')
 Promise = require('es6-promise').Promise
@@ -44,10 +45,15 @@ module.exports = class Libgit2LogUtils
   ###
   @getCommitHistory: (fileOrDirectory) ->
     gitRepoDir = @findGitRepoFor(fileOrDirectory)
+    projectRelativeFileOrDirectory = Path.resolve(fileOrDirectory).slice(gitRepoDir.length+1)
+    # console.log "gitRepoDir=", gitRepoDir
+    # console.log "projectRelativeFileOrDirectory=", projectRelativeFileOrDirectory
+
 
     return new Promise (resolve, reject) ->
       diffPromises = []
       patchPromises = []
+      debugger
       Git.Repository.open(gitRepoDir)
       .then (repo) -> repo.getMasterCommit()
       .then (firstCommitOnMaster) ->
@@ -61,26 +67,25 @@ module.exports = class Libgit2LogUtils
       .then (historyEntries) ->
         Promise.all(diffPromises).then ->
           Promise.all(patchPromises).then ->
-            resolve(historyEntries)
+            if projectRelativeFileOrDirectory.length <= 0
+              resolve(historyEntries)
+            else
+              resolve _.filter historyEntries, (historyEntry) ->
+                for file in historyEntry.files
+                  return true if Bstr.startsWith(file.path, projectRelativeFileOrDirectory)
+                return false
 
       .catch (error) ->
-        console.error("ERROR: ", error)
+        reject(error)
 
 
 
 _processPatches = (patches, historyEntry) ->
   for patch in patches
     #console.log "patch for #{historyEntry.message}"
-    switch
-      when patch.isCopied()
-        historyEntry.files.push patch.newFile().path()
-        #console.log "copiedFile #{patch.newFile().path()}"
-      when patch.isRenamed()
-        historyEntry.files.concat [patch.oldFile().path(), patch.newFile().path()]
-      else
-        historyEntry.files.push patch.oldFile().path()
-
     lineStats = patch.lineStats()
+
+    _getFileEntries(patch, historyEntry, lineStats)
     historyEntry.linesAdded += lineStats.total_additions
     historyEntry.linesDeleted += lineStats.total_deletions
     #console.log lineStats
@@ -114,7 +119,7 @@ _newHistoryEntryWithPatches = (commit, historyEntries, diffPromises, patchPromis
 
 
 _newHistoryEntry = (commit) ->
-  {
+  return {
     id: commit.sha()
     author: commit.author().name()
     authorDate: commit.timeMs()
@@ -124,4 +129,17 @@ _newHistoryEntry = (commit) ->
     linesAdded: 0
     linesDeleted: 0
     files: []
+  }
+
+
+_getFileEntries = (patch, historyEntry, lineStats) ->
+  diffFile = if patch.isCopied() || patch.isRenamed() then patch.newFile() else patch.oldFile()
+  historyEntry.files.push _getNewFileEntry(diffFile, lineStats)
+
+
+_getNewFileEntry = (diffFile, lineStats) ->
+  return {
+    path: diffFile.path()
+    linesAdded: lineStats.total_additions
+    linesDeleted: lineStats.total_deletions
   }
