@@ -12,9 +12,9 @@ Like stupid simple (*from bin/getLogJson*):
 ```javascript
 LogUtils = require('libgit2-log-utils');
 
-LogUtils.getCommitHistory('mydir/maybeMyFile').then(function(history) {
-  return console.log(JSON.stringify(history, null, 2));
-}).catch(function(error) {
+LogUtils.getCommitHistory('mydir/maybeMyFile')
+.then(function(history) {  return console.log(JSON.stringify(history, null, 2)); })
+.catch(function(error) {
   return console.error(error);
 });
 ```
