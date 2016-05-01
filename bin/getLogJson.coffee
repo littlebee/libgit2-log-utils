@@ -1,12 +1,16 @@
 #!/usr/bin/env coffee
 
 Path = require('path')
-LogUtils = require '../lib/libgit2-log-utils'
 
-unless process.argv.length > 2
+nodegit = require 'nodegit'
+GitLogUtils = require('../src/libgit2-log-utils')
+gitLogUtils = new GitLogUtils(nodegit)
+
+unless process.argv?.length > 2
   console.log "usage:  test/scripts/getLogJson fileOrDirectory"
+  process.exit(1)
 
-LogUtils.getCommitHistory(process.argv[2])
+gitLogUtils.getCommitHistory(process.argv[2])
 .then (history)->
   console.log JSON.stringify(history, null, 2)
 .catch (error) ->

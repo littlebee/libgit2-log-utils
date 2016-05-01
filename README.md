@@ -21,17 +21,18 @@ See instead:
 Like stupid simple (*from bin/getLogJson*):
 
 ```javascript
-nodegit = require('nodegit')
-LogUtils = require('libgit2-log-utils')
-logUtils = new LogUtils(nodegit)
+var nodegit = require('nodegit');
+var GitLogUtils = require('../src/libgit2-log-utils');
+var gitLogUtils = new GitLogUtils(nodegit);
 
-logUtils.getCommitHistory("myPath/maybeMyFile")
+gitLogUtils.getCommitHistory("myPath/maybeMyFile")
 .then(function(history) {
   return console.log(JSON.stringify(history, null, 2));
 })
 .catch(function(error) {
   return console.error(error);
 });
+
 ```
 ...will produce...
 
