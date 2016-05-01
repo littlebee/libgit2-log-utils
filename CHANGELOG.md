@@ -1,3 +1,13 @@
+## [0.2.0](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.5...0.2.0) (2016-05-122)
+See instead:
+- [atom-libgit2-log-utils](https://www.npmjs.com/package/atom-libgit2-log-utils) for use in Atom.
+- [node-libgit2-log-utils](https://www.npmjs.com/package/node-libgit2-log-utils) for use in Nodejs.
+
+
+### Other Commits
+* [003657f](git+https://github.com/littlebee/libgit2-log-utils.git/commit/003657f60a7c7587658a11baf923eec3c1e0b2e2) update README for new usage
+* [588b0ad](git+https://github.com/littlebee/libgit2-log-utils.git/commit/588b0ade438e0b44458d4f2b590d21b321e61805) refactor to act as base package for node- and atom- alternatives - remove nodegit direct dependency and have user pass in ref to nodegit
+
 ## [0.1.5](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.4...0.1.5) (2016-04-121)
 
 
