@@ -1,3 +1,9 @@
+## [0.2.1](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.2.0...0.2.1) (2016-05-122)
+
+
+### Other Commits
+* [2fb7a85](git+https://github.com/littlebee/libgit2-log-utils.git/commit/2fb7a858ee42f01e42e3aa0ab5a0635af576fb40) make bin/getLogJson work with new nodegit depend strategy
+
 ## [0.2.0](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.5...0.2.0) (2016-05-122)
 See instead:
 - [atom-libgit2-log-utils](https://www.npmjs.com/package/atom-libgit2-log-utils) for use in Atom.
