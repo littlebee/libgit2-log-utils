@@ -1,3 +1,9 @@
+## [0.3.0](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.2.1...0.3.0) (2016-05-122)
+Actually works.  :tmyk: without .npmignore, .gitignore is used
+
+### Other Commits
+* [e12f68c](git+https://github.com/littlebee/libgit2-log-utils.git/commit/e12f68c7901291ef19b850ff087f102645c0296e) add npmignore
+
 ## [0.2.1](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.2.0...0.2.1) (2016-05-122)
 
 
