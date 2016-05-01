@@ -1,3 +1,9 @@
+## [0.1.3](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.2...0.1.3) (2016-04-121)
+
+
+### Other Commits
+* [54ed87f](git+https://github.com/littlebee/libgit2-log-utils.git/commit/54ed87f79437f965fa5b4e0c040a765396ec5d8a) prepare for forking! shim nodegit require so that I can create an atom fork of the package
+
 ## [0.1.2](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.1...0.1.2) (2016-04-121)
 
 
