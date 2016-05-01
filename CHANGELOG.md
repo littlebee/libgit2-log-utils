@@ -1,3 +1,9 @@
+## [0.1.5](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.4...0.1.5) (2016-04-121)
+
+
+### Other Commits
+* [ea4929b](git+https://github.com/littlebee/libgit2-log-utils.git/commit/ea4929bf83b86da54fcfa65c3f12c17da567d87d) take out the trash (- debugger statements)
+
 ## [0.1.4](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.3...0.1.4) (2016-04-121)
 see atom-libgit2-log-utils npm package for atom support
 
