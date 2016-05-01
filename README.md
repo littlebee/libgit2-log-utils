@@ -1,5 +1,16 @@
 # libgit2-log-utils
-Simple utility functions for fetching git history using libgit2.
+
+Simple utility functions for fetching git history using nodegit (libgit2).
+
+
+#### This is probably not the library you're looking for...
+This is the base package for atom-libgit2-log-utils and node-libgit2-log-utils.   
+
+[Atom](http://www.atom.io) instatiates it's own nodegit package and does not like it when you require another instance of nodegit.
+
+See instead:
+- [atom-libgit2-log-utils](https://www.npmjs.com/package/atom-libgit2-log-utils) for use in Atom.
+- [node-libgit2-log-utils](https://www.npmjs.com/package/node-libgit2-log-utils) for use in Nodejs.
 
 
 ### Installation
@@ -10,9 +21,11 @@ Simple utility functions for fetching git history using libgit2.
 Like stupid simple (*from bin/getLogJson*):
 
 ```javascript
+nodegit = require('nodegit')
 LogUtils = require('libgit2-log-utils')
+logUtils = new LogUtils(nodegit)
 
-LogUtils.getCommitHistory("myPath/maybeMyFile")
+logUtils.getCommitHistory("myPath/maybeMyFile")
 .then(function(history) {
   return console.log(JSON.stringify(history, null, 2));
 })
