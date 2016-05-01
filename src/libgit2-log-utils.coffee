@@ -6,7 +6,7 @@ Fs = require "fs"
 _ = require('underscore')
 Bstr = require('bumble-strings')
 
-Git = require('nodegit')
+Git = require('./nodegitShim')
 Promise = require('es6-promise').Promise
 
 
