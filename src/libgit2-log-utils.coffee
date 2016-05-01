@@ -6,11 +6,16 @@ Fs = require "fs"
 _ = require('underscore')
 Bstr = require('bumble-strings')
 
-Git = require('./nodegitShim')
 Promise = require('es6-promise').Promise
 
 
 module.exports = class Libgit2LogUtils
+
+  constructor: (nodegit) ->
+    @Nodegit = nodegit
+    @_checkNodegitSet()
+    return @
+
 
   # TODO : move to more general lib?
   @findGitRepoFor: (fileOrDirectory) ->
@@ -59,24 +64,25 @@ module.exports = class Libgit2LogUtils
         ...
       }]
   ###
-  @getCommitHistory: (fileOrDirectory) ->
-    gitRepoDir = @findGitRepoFor(fileOrDirectory)
+  getCommitHistory: (fileOrDirectory) ->
+    @_checkNodegitSet()
+
+    gitRepoDir = Libgit2LogUtils.findGitRepoFor(fileOrDirectory)
     projectRelativeFileOrDirectory = Path.resolve(fileOrDirectory).slice(gitRepoDir.length+1)
     # console.log "gitRepoDir=", gitRepoDir
     # console.log "projectRelativeFileOrDirectory=", projectRelativeFileOrDirectory
 
-
-    return new Promise (resolve, reject) ->
+    return new Promise (resolve, reject) =>
       diffPromises = []
       patchPromises = []
-      Git.Repository.open(gitRepoDir)
+      @Nodegit.Repository.open(gitRepoDir)
       .then (repo) -> repo.getMasterCommit()
-      .then (firstCommitOnMaster) ->
-        _getCommitHistory(firstCommitOnMaster)
-      .then (allCommits) ->
+      .then (firstCommitOnMaster) =>
+        @_getCommitHistory(firstCommitOnMaster)
+      .then (allCommits) =>
         historyEntries = []
         for commit in allCommits
-          _newHistoryEntryWithPatches(commit, historyEntries, diffPromises, patchPromises)
+          @_newHistoryEntryWithPatches(commit, historyEntries, diffPromises, patchPromises)
         return historyEntries
 
       .then (historyEntries) ->
@@ -94,66 +100,73 @@ module.exports = class Libgit2LogUtils
         reject(error)
 
 
-
-_processPatches = (patches, historyEntry) ->
-  for patch in patches
-    #console.log "patch for #{historyEntry.message}"
-    lineStats = patch.lineStats()
-
-    _getFileEntries(patch, historyEntry, lineStats)
-    historyEntry.linesAdded += lineStats.total_additions
-    historyEntry.linesDeleted += lineStats.total_deletions
-    #console.log lineStats
+  _checkNodegitSet: ->
+    unless @Nodegit?
+      error = "Nodegit has not been set.  Need to call init(nodegit) on libgit2-log-utils"
+      console.error error
+      throw error
 
 
-_getCommitHistory = (firstCommitOnMaster) ->
-  new Promise (historyResolve) ->
-    commits = []
-    history = firstCommitOnMaster.history()
-    history.on 'commit', (commit) ->
-      commits.push commit
-    history.on 'end', () ->
-      historyResolve(commits)
-    history.start()
+
+  _processPatches: (patches, historyEntry) ->
+    for patch in patches
+      #console.log "patch for #{historyEntry.message}"
+      lineStats = patch.lineStats()
+
+      @_getFileEntries(patch, historyEntry, lineStats)
+      historyEntry.linesAdded += lineStats.total_additions
+      historyEntry.linesDeleted += lineStats.total_deletions
+      #console.log lineStats
 
 
-_newHistoryEntryWithPatches = (commit, historyEntries, diffPromises, patchPromises) ->
-  historyEntry = _newHistoryEntry(commit)
-  historyEntries.push historyEntry
-  diffPromises.push commit.getDiff().then (arrayDiff) ->
-    for diff, diffIndex in arrayDiff
-      patchPromises.push new Promise (patchResolve)->
-        diff.patches()
-        .then (patches) ->
-          _processPatches(patches, historyEntry)
-          patchResolve()
-        .catch (error) ->
-          console.error("ERROR: ", error)
-  return historyEntries
+  _getCommitHistory: (firstCommitOnMaster) ->
+    new Promise (historyResolve) ->
+      commits = []
+      history = firstCommitOnMaster.history()
+      history.on 'commit', (commit) ->
+        commits.push commit
+      history.on 'end', () ->
+        historyResolve(commits)
+      history.start()
 
 
-_newHistoryEntry = (commit) ->
-  return {
-    id: commit.sha()
-    author: commit.author().name()
-    authorDate: commit.timeMs()
-    message: commit.summary()
-    body: commit.message().split('\n\n')[1..-1].join('\n\n')
-    hash: commit.sha()
-    linesAdded: 0
-    linesDeleted: 0
-    files: []
-  }
+  _newHistoryEntryWithPatches: (commit, historyEntries, diffPromises, patchPromises) ->
+    historyEntry = @_newHistoryEntry(commit)
+    historyEntries.push historyEntry
+    diffPromises.push commit.getDiff().then (arrayDiff) =>
+      for diff, diffIndex in arrayDiff
+        patchPromises.push new Promise (patchResolve) =>
+          diff.patches()
+          .then (patches) =>
+            @_processPatches(patches, historyEntry)
+            patchResolve()
+          .catch (error) ->
+            console.error("ERROR: ", error)
+    return historyEntries
 
 
-_getFileEntries = (patch, historyEntry, lineStats) ->
-  diffFile = if patch.isCopied() || patch.isRenamed() then patch.newFile() else patch.oldFile()
-  historyEntry.files.push _getNewFileEntry(diffFile, lineStats)
+  _newHistoryEntry: (commit) ->
+    return {
+      id: commit.sha()
+      author: commit.author().name()
+      authorDate: commit.timeMs()
+      message: commit.summary()
+      body: commit.message().split('\n\n')[1..-1].join('\n\n')
+      hash: commit.sha()
+      linesAdded: 0
+      linesDeleted: 0
+      files: []
+    }
 
 
-_getNewFileEntry = (diffFile, lineStats) ->
-  return {
-    path: diffFile.path()
-    linesAdded: lineStats.total_additions
-    linesDeleted: lineStats.total_deletions
-  }
+  _getFileEntries: (patch, historyEntry, lineStats) ->
+    diffFile = if patch.isCopied() || patch.isRenamed() then patch.newFile() else patch.oldFile()
+    historyEntry.files.push @_getNewFileEntry(diffFile, lineStats)
+
+
+  _getNewFileEntry: (diffFile, lineStats) ->
+    return {
+      path: diffFile.path()
+      linesAdded: lineStats.total_additions
+      linesDeleted: lineStats.total_deletions
+    }

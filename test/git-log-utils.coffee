@@ -2,10 +2,13 @@
 Fs = require 'fs'
 Path = require 'path'
 
+nodegit = require 'nodegit'
 GitLogUtils = require('../src/libgit2-log-utils')
+GitLogUtils = new GitLogUtils(nodegit)
 
 expectedCommitsForFile = require './data/expectedCommitsForFile'
 expectedCommitsForDir = require './data/expectedCommitsForDir'
+
 
 debugger
 
@@ -21,6 +24,10 @@ describe "GitUtils", ->
       .then (commitHistory) ->
         testData = commitHistory
         done()
+      .catch (error) ->
+        console.error error
+        done(error)
+
 
     it "should have 5 commits", ->
       testData.length.should.equal(5)
@@ -35,6 +42,10 @@ describe "GitUtils", ->
       .then (commitHistory) ->
         testData = commitHistory
         done()
+      .catch (error) ->
+        console.error error
+        done(error)
+
 
     it "should have at least as many commits as we once did", ->
       expect(testData.length).to.be.above(expectedCommitsForDir.length)
