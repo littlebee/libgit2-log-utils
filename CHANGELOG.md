@@ -1,3 +1,9 @@
+## [0.1.4](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.3...0.1.4) (2016-04-121)
+see atom-libgit2-log-utils npm package for atom support
+
+### Other Commits
+* [0876370](git+https://github.com/littlebee/libgit2-log-utils.git/commit/0876370e94797e5c7d0ec7b414dae909bcbd8cbe) add shim for nodegit
+
 ## [0.1.3](git+https://github.com/littlebee/libgit2-log-utils.git/compare/0.1.2...0.1.3) (2016-04-121)
 
 
