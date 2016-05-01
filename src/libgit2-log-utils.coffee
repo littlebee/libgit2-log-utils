@@ -69,7 +69,6 @@ module.exports = class Libgit2LogUtils
     return new Promise (resolve, reject) ->
       diffPromises = []
       patchPromises = []
-      debugger
       Git.Repository.open(gitRepoDir)
       .then (repo) -> repo.getMasterCommit()
       .then (firstCommitOnMaster) ->
@@ -122,7 +121,6 @@ _newHistoryEntryWithPatches = (commit, historyEntries, diffPromises, patchPromis
   historyEntry = _newHistoryEntry(commit)
   historyEntries.push historyEntry
   diffPromises.push commit.getDiff().then (arrayDiff) ->
-    debugger
     for diff, diffIndex in arrayDiff
       patchPromises.push new Promise (patchResolve)->
         diff.patches()
