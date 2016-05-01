@@ -1,6 +1,6 @@
 {
   "name": "libgit2-log-utils",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Simple utility functions for fetching git history using libgit2 ",
   "main": "lib/libgit2-log-utils.js",
   "scripts": {
