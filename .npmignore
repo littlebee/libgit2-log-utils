@@ -1,0 +1,12 @@
+# this libs compiled source
+src
+node_modules
+
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
