@@ -6,9 +6,9 @@
 ###
 
 # for the Atom fork, this line is uncommented.
-# Nodegit = require('atom').GitRepositoryAsync.Git
+Nodegit = require('atom').GitRepositoryAsync.Git
 
 # for the normal nodejs version this line is uncommented.
-Nodegit = require('nodegit')
+# Nodegit = require('nodegit')
 
 module.exports = Nodegit
