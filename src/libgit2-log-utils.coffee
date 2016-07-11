@@ -64,6 +64,8 @@ module.exports = class Libgit2LogUtils
         ...
       }]
   ###
+  tStart = null
+  
   getCommitHistory: (fileOrDirectory) ->
     @_checkNodegitSet()
 
@@ -71,23 +73,45 @@ module.exports = class Libgit2LogUtils
     projectRelativeFileOrDirectory = Path.resolve(fileOrDirectory).slice(gitRepoDir.length+1)
     # console.log "gitRepoDir=", gitRepoDir
     # console.log "projectRelativeFileOrDirectory=", projectRelativeFileOrDirectory
-
+    tStart = Date.now()
+    
     return new Promise (resolve, reject) =>
       diffPromises = []
       patchPromises = []
+      allCommits = []
+      repo = null
       @Nodegit.Repository.open(gitRepoDir)
-      .then (repo) -> repo.getMasterCommit()
+      .then (r) -> 
+        repo = r
+        repo.getMasterCommit()
+      
       .then (firstCommitOnMaster) =>
-        @_getCommitHistory(firstCommitOnMaster)
-      .then (allCommits) =>
+        walker = repo.createRevWalk();
+        walker.push(firstCommitOnMaster.sha());
+        walker.sorting(@Nodegit.Revwalk.SORT.Time);
+
+        return walker.fileHistoryWalk(projectRelativeFileOrDirectory, 100);
+      
+      .then (revWalkCommits) =>
+          console.log 'initial commits', revWalkCommits.length, Date.now() - tStart
+          @_processRevwalkCommits(repo, projectRelativeFileOrDirectory, allCommits, revWalkCommits)
+      
+      .then =>
+        console.log 'allCommits', allCommits.length, Date.now() - tStart    
+          
         historyEntries = []
         for commit in allCommits
-          @_newHistoryEntryWithPatches(commit, historyEntries, diffPromises, patchPromises)
+          commit.commit.repo = repo
+          @_newHistoryEntryWithPatches(commit.commit, historyEntries, diffPromises, patchPromises)
         return historyEntries
-
+      
       .then (historyEntries) ->
+        console.log 'historyEntries', historyEntries.length, Date.now() - tStart
         Promise.all(diffPromises).then ->
+          console.log 'diffPromises', diffPromises.length, Date.now() - tStart
           Promise.all(patchPromises).then ->
+            console.log 'patchPromises', patchPromises.length,  Date.now() - tStart
+            # resolve(historyEntries)
             if projectRelativeFileOrDirectory.length <= 0
               resolve(historyEntries)
             else
@@ -106,6 +130,29 @@ module.exports = class Libgit2LogUtils
       console.error error
       throw error
 
+  _processRevwalkCommits: (repo, projectRelativeFileOrDirectory, allCommits, revWalkCommits) ->
+    lastSha = undefined
+    if allCommits.length > 0
+      lastSha = allCommits[allCommits.length - 1].commit.sha()
+      if revWalkCommits.length == 1 and revWalkCommits[0].commit.sha() == lastSha
+        return
+    
+    revWalkCommits.forEach (entry) ->
+      allCommits.push entry
+      return
+    
+    return unless allCommits.length > 0
+    
+    walker = repo.createRevWalk()
+    
+    lastSha = allCommits[allCommits.length - 1]?.commit.sha()
+    walker.push lastSha if lastSha
+    
+    walker.sorting @Nodegit.Revwalk.SORT.TIME
+    walker.fileHistoryWalk(projectRelativeFileOrDirectory, 100).then (revWalkCommits) =>
+      console.log 'more commits', revWalkCommits.length, Date.now() - tStart
+      @_processRevwalkCommits(repo, projectRelativeFileOrDirectory, allCommits, revWalkCommits)
+    
 
 
   _processPatches: (patches, historyEntry) ->

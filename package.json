@@ -33,7 +33,6 @@
   "dependencies": {
     "bumble-strings": "0.4.1",
     "es6-promise": "3.1.2",
-    "underscore": "1.8.3",
-    "nodegit": "0.12.2"
+    "underscore": "1.8.3"
   }
 }
