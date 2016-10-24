@@ -1,4 +1,3 @@
-
 ChildProcess = require "child_process"
 Path = require "path"
 Fs = require "fs"
@@ -116,6 +115,7 @@ module.exports = class Libgit2LogUtils
               resolve(historyEntries)
             else
               resolve _.filter historyEntries, (historyEntry) ->
+                projectRelativeFileOrDirectory = projectRelativeFileOrDirectory.replace(/\\/g, "/")
                 for file in historyEntry.files
                   return true if Bstr.startsWith(file.path, projectRelativeFileOrDirectory)
                 return false
